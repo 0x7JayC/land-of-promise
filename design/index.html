@@ -920,9 +920,9 @@
   }
 
   /* ─── SCROLL ANIMATIONS ─── */
-  .reveal { opacity: 0; transform: translateY(32px); }
-  .reveal-left { opacity: 0; transform: translateX(-32px); }
-  .reveal-right { opacity: 0; transform: translateX(32px); }
+  /* No initial opacity:0 — GSAP fromTo sets it explicitly when JS runs.
+     This keeps content visible if scripts fail or race. */
+  .reveal, .reveal-left, .reveal-right { will-change: transform, opacity; }
 
   /* ─── MOBILE ─── */
   @media (max-width: 900px) {
