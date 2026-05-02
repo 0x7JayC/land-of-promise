@@ -981,8 +981,9 @@
 
   /* ─── MOBILE ─── */
   @media (max-width: 900px) {
-    nav { padding: 0 20px; }
-    .nav-burger { display: block; }
+    nav { padding: 0 16px; gap: 12px; }
+    .nav-logo img { height: 24px !important; max-width: calc(100vw - 100px); }
+    .nav-burger { display: block; flex-shrink: 0; }
     .nav-links {
       position: fixed;
       top: 72px; left: 0; right: 0;
