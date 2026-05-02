@@ -128,7 +128,7 @@
     padding: 120px 48px 80px;
   }
 
-  /* Minecraft sky gradient */
+  /* Minecraft sky gradient (kept as fallback layer behind the video) */
   #hero::before {
     content: '';
     position: absolute; inset: 0;
@@ -139,6 +139,30 @@
       #1a3a2a 80%,
       #0e1a0e 100%
     );
+  }
+
+  /* YouTube hero background video */
+  .hero-video {
+    position: absolute; inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .hero-video iframe {
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 100vw; height: 56.25vw;     /* 16:9 by width */
+    min-width: 177.78vh; min-height: 100vh; /* cover by height */
+    transform: translate(-50%, -50%);
+    border: 0;
+  }
+  /* Dark overlay for legibility */
+  .hero-video::after {
+    content: '';
+    position: absolute; inset: 0;
+    background:
+      linear-gradient(180deg, rgba(10,10,26,0.55) 0%, rgba(10,10,26,0.35) 40%, rgba(14,26,14,0.85) 100%);
+    pointer-events: none;
   }
 
   /* Stars */
@@ -987,6 +1011,15 @@
 
 <!-- ─── HERO ─── -->
 <section id="hero">
+  <!-- YouTube background video -->
+  <div class="hero-video">
+    <iframe
+      src="https://www.youtube-nocookie.com/embed/5PAZW26b6s4?autoplay=1&mute=1&loop=1&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1&iv_load_policy=3&playlist=5PAZW26b6s4"
+      title="Land of Promise"
+      frameborder="0"
+      allow="autoplay; encrypted-media; picture-in-picture"
+      allowfullscreen></iframe>
+  </div>
   <!-- Stars canvas -->
   <canvas class="stars" id="stars-canvas"></canvas>
 
