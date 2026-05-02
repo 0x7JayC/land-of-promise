@@ -23,11 +23,11 @@ export default function Home() {
       <div dangerouslySetInnerHTML={{ __html: body }} />
       <Script
         src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"
-        strategy="beforeInteractive"
+        strategy="afterInteractive"
       />
       <Script
         src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"
-        strategy="beforeInteractive"
+        strategy="afterInteractive"
       />
       <Script
         id="lop-design-script"
