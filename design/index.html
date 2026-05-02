@@ -118,6 +118,32 @@
   }
   .nav-cta:hover { background: var(--grass-dark); transform: translateY(-1px); }
 
+  /* ─── HAMBURGER ─── */
+  .nav-burger {
+    display: none;
+    width: 36px; height: 36px;
+    background: transparent;
+    border: 2px solid var(--gold);
+    cursor: pointer;
+    padding: 0;
+    position: relative;
+    z-index: 1100;
+  }
+  .nav-burger span {
+    display: block;
+    position: absolute;
+    left: 6px; right: 6px;
+    height: 3px;
+    background: var(--gold);
+    transition: transform 0.25s, opacity 0.2s, top 0.25s;
+  }
+  .nav-burger span:nth-child(1) { top: 8px; }
+  .nav-burger span:nth-child(2) { top: 15px; }
+  .nav-burger span:nth-child(3) { top: 22px; }
+  .nav-burger.open span:nth-child(1) { top: 15px; transform: rotate(45deg); }
+  .nav-burger.open span:nth-child(2) { opacity: 0; }
+  .nav-burger.open span:nth-child(3) { top: 15px; transform: rotate(-45deg); }
+
   /* ─── HERO ─── */
   #hero {
     position: relative;
@@ -951,7 +977,36 @@
   /* ─── MOBILE ─── */
   @media (max-width: 900px) {
     nav { padding: 0 20px; }
-    .nav-links { display: none; }
+    .nav-burger { display: block; }
+    .nav-links {
+      position: fixed;
+      top: 72px; left: 0; right: 0;
+      flex-direction: column;
+      gap: 0;
+      align-items: stretch;
+      background: rgba(14,14,24,0.98);
+      backdrop-filter: blur(12px);
+      border-bottom: 2px solid rgba(246,201,78,0.25);
+      padding: 12px 20px 24px;
+      transform: translateY(-120%);
+      transition: transform 0.3s ease;
+      max-height: calc(100vh - 72px);
+      overflow-y: auto;
+    }
+    .nav-links.open { transform: translateY(0); }
+    .nav-links li { width: 100%; }
+    .nav-links a {
+      display: block;
+      padding: 16px 4px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      font-size: 9px;
+    }
+    .nav-links a::after { display: none; }
+    .nav-links .nav-cta {
+      margin-top: 12px;
+      text-align: center;
+      padding: 14px;
+    }
     section { padding: 60px 20px; }
     .welcome-inner { grid-template-columns: 1fr; gap: 40px; }
     .zones-grid { grid-template-columns: 1fr; }
@@ -999,7 +1054,10 @@
 <!-- ─── NAV ─── -->
 <nav id="main-nav">
   <a href="#hero" class="nav-logo" style="display:flex;align-items:center;gap:10px"><img src="/brand/cube.png" alt="" style="width:28px;height:28px;image-rendering:pixelated" />LAND<br><span>OF PROMISE</span></a>
-  <ul class="nav-links">
+  <button class="nav-burger" id="nav-burger" aria-label="Toggle menu" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
+  <ul class="nav-links" id="nav-links">
     <li><a href="#lop-club">LOP Club</a></li>
     <li><a href="#builders">Builders</a></li>
     <li><a href="#faith">World</a></li>
@@ -1711,6 +1769,21 @@ function animateCounters() {
   });
 }
 animateCounters();
+
+// Mobile hamburger
+(function() {
+  const btn = document.getElementById('nav-burger');
+  const links = document.getElementById('nav-links');
+  if (!btn || !links) return;
+  const close = () => { btn.classList.remove('open'); links.classList.remove('open'); btn.setAttribute('aria-expanded','false'); };
+  btn.addEventListener('click', () => {
+    const open = !btn.classList.contains('open');
+    btn.classList.toggle('open', open);
+    links.classList.toggle('open', open);
+    btn.setAttribute('aria-expanded', String(open));
+  });
+  links.querySelectorAll('a').forEach(a => a.addEventListener('click', close));
+})();
 
 // Nav scroll effect
 const nav = document.getElementById('main-nav');
