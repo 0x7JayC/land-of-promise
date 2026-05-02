@@ -11,19 +11,24 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <style>
   :root {
+    /* Land of Promise — Brand ID V2 palette */
     --obsidian: #0e0e18;
     --stone: #1c1c2e;
     --stone-mid: #252540;
     --stone-light: #3a3a5c;
-    --grass: #5aac2e;
-    --grass-dark: #3d7a1e;
-    --gold: #f6c94e;
-    --gold-dim: #c49a20;
-    --sky: #7ecde8;
+    --grass: #7eb052;        /* primary brand green */
+    --grass-light: #9bc66a;
+    --grass-dark: #537941;   /* deeper brand green */
+    --gold: #f8d24a;         /* brand yellow */
+    --gold-dim: #efaf0f;
+    --brown: #b9864b;        /* brand brown light */
+    --brown-mid: #7e5332;
+    --brown-dark: #5c3925;
+    --sky: #66c1e9;          /* brand cyan accent */
     --sky-dark: #4a8fa8;
     --white: #f0ede6;
     --cream: #d4cfc4;
-    --diamond: #5de4e4;
+    --diamond: #71c9c3;      /* brand teal */
     --pixel: 4px;
   }
 
@@ -34,7 +39,7 @@
   body {
     background: var(--obsidian);
     color: var(--white);
-    font-family: 'Nunito', sans-serif;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
     overflow-x: hidden;
   }
 
@@ -1053,7 +1058,7 @@
 
 <!-- ─── NAV ─── -->
 <nav id="main-nav">
-  <a href="#hero" class="nav-logo" style="display:flex;align-items:center;gap:10px"><img src="/brand/cube.png" alt="" style="width:28px;height:28px;image-rendering:pixelated" />LAND<br><span>OF PROMISE</span></a>
+  <a href="#hero" class="nav-logo" aria-label="Land of Promise"><img src="/brand/logo.png" alt="Land of Promise" style="height:34px;width:auto;display:block;image-rendering:pixelated" /></a>
   <button class="nav-burger" id="nav-burger" aria-label="Toggle menu" aria-expanded="false">
     <span></span><span></span><span></span>
   </button>
