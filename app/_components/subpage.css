@@ -1,0 +1,168 @@
+/* Brand variables — mirror homepage */
+:root {
+  --obsidian: #0e0e18;
+  --stone: #1c1c2e;
+  --stone-mid: #252540;
+  --stone-light: #3a3a5c;
+  --grass: #7eb052;
+  --grass-light: #9bc66a;
+  --grass-dark: #537941;
+  --gold: #f8d24a;
+  --gold-dim: #efaf0f;
+  --brown: #b9864b;
+  --brown-mid: #7e5332;
+  --brown-dark: #5c3925;
+  --sky: #66c1e9;
+  --diamond: #71c9c3;
+  --white: #f0ede6;
+  --cream: #d4cfc4;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--obsidian);
+  color: var(--white);
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+a { color: inherit; }
+
+.px { font-family: 'Press Start 2P', monospace; }
+
+/* ── NAV ── */
+.sp-nav {
+  position: sticky; top: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 32px;
+  height: 72px;
+  background: rgba(14,14,24,0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 2px solid rgba(248,210,74,0.18);
+}
+.sp-nav-logo img { height: 34px; display: block; image-rendering: pixelated; }
+.sp-nav-links { display: flex; gap: 28px; list-style: none; align-items: center; }
+.sp-nav-links a {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 8px;
+  color: var(--cream);
+  text-decoration: none;
+  letter-spacing: 0.05em;
+}
+.sp-nav-links a:hover { color: var(--gold); }
+.sp-nav-cta {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 8px;
+  background: var(--grass);
+  color: #fff;
+  padding: 10px 16px;
+  text-decoration: none;
+  clip-path: polygon(0 0,calc(100% - 4px) 0,100% 4px,100% 100%,4px 100%,0 calc(100% - 4px));
+}
+.sp-nav-cta:hover { background: var(--grass-dark); }
+
+/* ── PAGE ── */
+.sp-main { padding: 80px 32px 100px; max-width: 880px; margin: 0 auto; }
+.sp-tag {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 8px;
+  color: var(--gold);
+  letter-spacing: 0.15em;
+  display: block;
+  margin-bottom: 16px;
+}
+.sp-h1 {
+  font-family: 'Press Start 2P', monospace;
+  font-size: clamp(20px, 3.5vw, 36px);
+  line-height: 1.5;
+  color: var(--white);
+  text-shadow: 3px 3px 0 rgba(0,0,0,0.6);
+  margin-bottom: 24px;
+}
+.sp-h1 .accent { color: var(--gold); }
+.sp-h1 .green { color: var(--grass); }
+.sp-h2 {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 14px;
+  line-height: 1.6;
+  margin: 48px 0 16px;
+  color: var(--white);
+}
+.sp-h3 {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 10px;
+  line-height: 1.6;
+  margin: 28px 0 12px;
+  color: var(--gold);
+}
+.sp-lead {
+  font-size: 18px;
+  line-height: 1.8;
+  color: var(--cream);
+  margin-bottom: 28px;
+  font-weight: 600;
+}
+.sp-body p, .sp-body li {
+  font-size: 16px;
+  line-height: 1.85;
+  color: var(--cream);
+  margin-bottom: 18px;
+}
+.sp-body ul { padding-left: 20px; }
+.sp-body strong { color: var(--gold); }
+
+.sp-card {
+  background: var(--stone);
+  border: 2px solid var(--stone-light);
+  border-left: 4px solid var(--grass);
+  padding: 24px 28px;
+  margin: 16px 0;
+}
+.sp-card h4 {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 9px;
+  color: var(--gold);
+  margin-bottom: 10px;
+  letter-spacing: 0.05em;
+}
+.sp-card p { margin: 0; font-size: 15px; color: var(--cream); line-height: 1.75; font-weight: 600; }
+
+.sp-modules { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px; }
+.sp-modules .sp-card { margin: 0; }
+
+.sp-cta {
+  display: inline-block;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 10px;
+  background: var(--gold);
+  color: var(--obsidian);
+  padding: 14px 28px;
+  text-decoration: none;
+  margin-top: 24px;
+  clip-path: polygon(0 0,calc(100% - 6px) 0,100% 6px,100% 100%,6px 100%,0 calc(100% - 6px));
+  box-shadow: 4px 4px 0 rgba(0,0,0,0.5);
+}
+.sp-cta:hover { transform: translate(-2px,-2px); box-shadow: 6px 6px 0 rgba(0,0,0,0.5); }
+
+/* ── FOOTER ── */
+.sp-footer {
+  background: var(--obsidian);
+  border-top: 3px solid var(--stone-light);
+  padding: 48px 32px 32px;
+  text-align: center;
+}
+.sp-footer img { height: 40px; image-rendering: pixelated; margin-bottom: 16px; }
+.sp-footer p {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 7px;
+  color: rgba(255,255,255,0.4);
+  letter-spacing: 0.1em;
+  margin-top: 12px;
+}
+.sp-footer a { color: var(--sky); text-decoration: none; }
+
+@media (max-width: 700px) {
+  .sp-nav-links li:not(:last-child) { display: none; }
+  .sp-modules { grid-template-columns: 1fr; }
+  .sp-main { padding: 48px 20px 80px; }
+}
