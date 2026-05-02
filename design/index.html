@@ -1,0 +1,1706 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Land of Promise | A Christian Minecraft Community</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<style>
+  :root {
+    --obsidian: #0e0e18;
+    --stone: #1c1c2e;
+    --stone-mid: #252540;
+    --stone-light: #3a3a5c;
+    --grass: #5aac2e;
+    --grass-dark: #3d7a1e;
+    --gold: #f6c94e;
+    --gold-dim: #c49a20;
+    --sky: #7ecde8;
+    --sky-dark: #4a8fa8;
+    --white: #f0ede6;
+    --cream: #d4cfc4;
+    --diamond: #5de4e4;
+    --pixel: 4px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--obsidian);
+    color: var(--white);
+    font-family: 'Nunito', sans-serif;
+    overflow-x: hidden;
+  }
+
+  /* PIXEL FONT */
+  .px { font-family: 'Press Start 2P', monospace; }
+
+  /* ─── NOISE TEXTURE OVERLAY ─── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4'%3E%3Crect width='1' height='1' x='0' y='0' fill='rgba(255,255,255,0.015)'/%3E%3Crect width='1' height='1' x='2' y='2' fill='rgba(255,255,255,0.01)'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 9999;
+  }
+
+  /* ─── MINECRAFT BLOCK PATTERNS ─── */
+  .block-bg {
+    background-image:
+      linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+    background-size: 32px 32px;
+  }
+
+  /* ─── NAV ─── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 48px;
+    height: 72px;
+    background: rgba(14,14,24,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 2px solid rgba(246,201,78,0.15);
+  }
+
+  .nav-logo {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 11px;
+    color: var(--gold);
+    letter-spacing: 0.05em;
+    text-decoration: none;
+    line-height: 1.5;
+  }
+  .nav-logo span { color: var(--grass); }
+
+  .nav-links {
+    display: flex; gap: 36px; list-style: none;
+    align-items: center;
+  }
+
+  .nav-links a {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 8px;
+    color: var(--cream);
+    text-decoration: none;
+    letter-spacing: 0.05em;
+    transition: color 0.2s;
+    position: relative;
+  }
+
+  .nav-links a::after {
+    content: '';
+    position: absolute; bottom: -4px; left: 0; right: 0;
+    height: 2px; background: var(--gold);
+    transform: scaleX(0); transform-origin: left;
+    transition: transform 0.25s;
+  }
+
+  .nav-links a:hover { color: var(--gold); }
+  .nav-links a:hover::after { transform: scaleX(1); }
+
+  .nav-cta {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 8px;
+    background: var(--grass);
+    color: #fff;
+    padding: 10px 18px;
+    border: none; cursor: pointer;
+    text-decoration: none;
+    clip-path: polygon(0 0,calc(100% - 4px) 0,100% 4px,100% 100%,4px 100%,0 calc(100% - 4px));
+    transition: background 0.2s, transform 0.1s;
+    display: inline-block;
+  }
+  .nav-cta:hover { background: var(--grass-dark); transform: translateY(-1px); }
+
+  /* ─── HERO ─── */
+  #hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    overflow: hidden;
+    padding: 120px 48px 80px;
+  }
+
+  /* Minecraft sky gradient */
+  #hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(180deg,
+      #0a0a1a 0%,
+      #0d1a33 30%,
+      #152240 55%,
+      #1a3a2a 80%,
+      #0e1a0e 100%
+    );
+  }
+
+  /* Stars */
+  .stars {
+    position: absolute; inset: 0; pointer-events: none;
+  }
+
+  /* Floating blocks */
+  .float-block {
+    position: absolute;
+    image-rendering: pixelated;
+    opacity: 0.12;
+    animation: floatUp 20s linear infinite;
+  }
+
+  @keyframes floatUp {
+    0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+    10% { opacity: 0.12; }
+    90% { opacity: 0.08; }
+    100% { transform: translateY(-100px) rotate(360deg); opacity: 0; }
+  }
+
+  /* Ground line */
+  .hero-ground {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    height: 64px;
+    background: repeating-linear-gradient(
+      90deg,
+      #3d7a1e 0px, #3d7a1e 32px,
+      #5aac2e 32px, #5aac2e 64px
+    );
+    display: flex;
+  }
+
+  .hero-ground::before {
+    content: '';
+    position: absolute; top: -32px; left: 0; right: 0;
+    height: 32px;
+    background: repeating-linear-gradient(
+      90deg,
+      #5c4a2e 0px, #5c4a2e 32px,
+      #7a6040 32px, #7a6040 64px
+    );
+  }
+
+  .hero-content {
+    position: relative; z-index: 2;
+    text-align: center;
+    max-width: 900px;
+  }
+
+  .hero-tag {
+    display: inline-block;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 9px;
+    color: var(--grass);
+    background: rgba(90,172,46,0.1);
+    border: 1px solid rgba(90,172,46,0.3);
+    padding: 8px 16px;
+    margin-bottom: 32px;
+    letter-spacing: 0.1em;
+  }
+
+  .hero-title {
+    font-family: 'Press Start 2P', monospace;
+    font-size: clamp(22px, 4vw, 44px);
+    line-height: 1.6;
+    color: var(--white);
+    margin-bottom: 12px;
+    text-shadow: 4px 4px 0 rgba(0,0,0,0.8), 0 0 40px rgba(246,201,78,0.2);
+  }
+
+  .hero-title .gold { color: var(--gold); }
+  .hero-title .green { color: var(--grass); }
+
+  .hero-sub {
+    font-size: 18px;
+    color: var(--cream);
+    line-height: 1.8;
+    max-width: 640px;
+    margin: 0 auto 48px;
+    font-weight: 600;
+  }
+
+  .hero-btns {
+    display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;
+  }
+
+  .btn-primary {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 10px;
+    background: var(--gold);
+    color: var(--obsidian);
+    padding: 14px 28px;
+    border: none; cursor: pointer; text-decoration: none;
+    display: inline-block;
+    clip-path: polygon(0 0,calc(100% - 6px) 0,100% 6px,100% 100%,6px 100%,0 calc(100% - 6px));
+    transition: all 0.2s;
+    box-shadow: 4px 4px 0 rgba(0,0,0,0.5);
+    position: relative;
+  }
+  .btn-primary:hover { transform: translate(-2px,-2px); box-shadow: 6px 6px 0 rgba(0,0,0,0.5); }
+
+  .btn-secondary {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 10px;
+    background: transparent;
+    color: var(--white);
+    padding: 14px 28px;
+    border: 2px solid var(--sky);
+    cursor: pointer; text-decoration: none;
+    display: inline-block;
+    clip-path: polygon(0 0,calc(100% - 6px) 0,100% 6px,100% 100%,6px 100%,0 calc(100% - 6px));
+    transition: all 0.2s;
+  }
+  .btn-secondary:hover { background: rgba(126,205,232,0.1); transform: translate(-2px,-2px); }
+
+  /* Scroll indicator */
+  .scroll-hint {
+    position: absolute; bottom: 80px; left: 50%; transform: translateX(-50%);
+    font-family: 'Press Start 2P', monospace;
+    font-size: 7px;
+    color: rgba(255,255,255,0.3);
+    letter-spacing: 0.1em;
+    animation: blink 2s infinite;
+    z-index: 2;
+  }
+  @keyframes blink { 0%,100% { opacity: 0.3; } 50% { opacity: 0.8; } }
+
+  /* ─── SECTION COMMONS ─── */
+  section { padding: 100px 48px; }
+
+  .section-tag {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 8px;
+    color: var(--gold);
+    letter-spacing: 0.15em;
+    margin-bottom: 16px;
+    display: block;
+  }
+
+  .section-title {
+    font-family: 'Press Start 2P', monospace;
+    font-size: clamp(16px, 2.5vw, 28px);
+    line-height: 1.7;
+    margin-bottom: 24px;
+    color: var(--white);
+    text-shadow: 3px 3px 0 rgba(0,0,0,0.6);
+  }
+
+  .section-body {
+    font-size: 17px;
+    line-height: 1.9;
+    color: var(--cream);
+    max-width: 600px;
+    font-weight: 600;
+  }
+
+  /* ─── WELCOME SECTION ─── */
+  #welcome {
+    background: var(--stone);
+    position: relative;
+    overflow: hidden;
+  }
+
+  #welcome .block-bg {
+    position: absolute; inset: 0;
+  }
+
+  .welcome-inner {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .welcome-visual {
+    position: relative;
+    height: 420px;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  /* Minecraft-style world thumbnail */
+  .mc-world {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+    border: 3px solid var(--stone-light);
+    box-shadow: 8px 8px 0 rgba(0,0,0,0.5);
+  }
+
+  .mc-world-sky {
+    position: absolute; top: 0; left: 0; right: 0;
+    height: 55%;
+    background: linear-gradient(180deg, #0a1628 0%, #1a3a5c 100%);
+  }
+
+  .mc-world-sun {
+    position: absolute; top: 30px; right: 60px;
+    width: 48px; height: 48px;
+    background: var(--gold);
+    box-shadow: 0 0 30px rgba(246,201,78,0.6);
+    image-rendering: pixelated;
+  }
+
+  .mc-world-ground {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    height: 45%;
+    background: repeating-linear-gradient(
+      90deg,
+      #3d7a1e 0px, #3d7a1e 32px,
+      #5aac2e 32px, #5aac2e 64px
+    );
+  }
+
+  .mc-world-ground::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0;
+    height: 50%;
+    background: repeating-linear-gradient(
+      90deg,
+      #5c4a2e 0px, #5c4a2e 32px,
+      #7a6040 32px, #7a6040 64px
+    );
+  }
+
+  /* Pixelated cross */
+  .mc-cross {
+    position: absolute;
+    z-index: 10;
+    width: 32px; height: 32px;
+  }
+
+  /* ─── STATS BAR ─── */
+  .stats-bar {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2px;
+    background: var(--obsidian);
+    border: 2px solid var(--stone-light);
+    margin-top: 48px;
+  }
+
+  .stat-block {
+    background: var(--stone-mid);
+    padding: 28px 20px;
+    text-align: center;
+    border-right: 2px solid var(--obsidian);
+    transition: background 0.2s;
+  }
+  .stat-block:last-child { border-right: none; }
+  .stat-block:hover { background: var(--stone-light); }
+
+  .stat-num {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 22px;
+    color: var(--gold);
+    display: block;
+    margin-bottom: 10px;
+  }
+
+  .stat-label {
+    font-size: 13px;
+    color: var(--cream);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  /* ─── FAITH METAVERSE ─── */
+  #faith {
+    background: var(--obsidian);
+    position: relative;
+    overflow: hidden;
+  }
+
+  #faith::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 70% 50%, rgba(90,172,46,0.08) 0%, transparent 60%);
+  }
+
+  .faith-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .zones-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 3px;
+    margin-top: 60px;
+    background: var(--obsidian);
+    border: 3px solid var(--stone-light);
+  }
+
+  .zone-card {
+    background: var(--stone);
+    padding: 36px 28px;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    transition: background 0.25s, transform 0.25s;
+  }
+
+  .zone-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--zone-color, var(--grass));
+    transform: scaleX(0); transform-origin: left;
+    transition: transform 0.3s;
+  }
+  .zone-card:hover::before { transform: scaleX(1); }
+  .zone-card:hover { background: var(--stone-mid); }
+
+  .zone-icon {
+    width: 48px; height: 48px;
+    margin: 0 auto 20px;
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    gap: 2px;
+  }
+
+  .zone-icon-px {
+    width: 100%; aspect-ratio: 1;
+  }
+
+  .zone-title {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 9px;
+    color: var(--white);
+    margin-bottom: 14px;
+    line-height: 1.7;
+  }
+
+  .zone-desc {
+    font-size: 14px;
+    color: var(--cream);
+    line-height: 1.7;
+    font-weight: 600;
+  }
+
+  /* ─── TESTIMONIALS ─── */
+  #testimonials {
+    background: var(--stone);
+    position: relative;
+  }
+
+  #testimonials::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 31px,
+      rgba(255,255,255,0.015) 31px,
+      rgba(255,255,255,0.015) 32px
+    );
+  }
+
+  .testimonials-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    position: relative;
+  }
+
+  .testi-header {
+    display: flex; align-items: flex-end; justify-content: space-between;
+    margin-bottom: 48px;
+  }
+
+  .testi-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3px;
+    background: var(--obsidian);
+  }
+
+  .testi-card {
+    background: var(--stone-mid);
+    padding: 36px 32px;
+    position: relative;
+    border-left: 4px solid var(--stone-light);
+    transition: border-color 0.25s, background 0.25s;
+  }
+  .testi-card:hover { border-left-color: var(--gold); background: var(--stone); }
+
+  .testi-quote {
+    font-size: 16px;
+    line-height: 1.9;
+    color: var(--cream);
+    font-weight: 600;
+    margin-bottom: 24px;
+    font-style: italic;
+  }
+
+  .testi-quote::before {
+    content: '"';
+    font-family: 'Press Start 2P', monospace;
+    font-size: 28px;
+    color: var(--gold);
+    display: block;
+    margin-bottom: 12px;
+    line-height: 1;
+  }
+
+  .testi-author {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 8px;
+    color: var(--gold);
+    letter-spacing: 0.05em;
+  }
+
+  .testi-location {
+    font-size: 13px;
+    color: var(--sky);
+    font-weight: 700;
+    margin-top: 6px;
+  }
+
+  /* ─── ROADMAP ─── */
+  #roadmap {
+    background: var(--obsidian);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .roadmap-inner {
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+
+  .roadmap-line {
+    position: relative;
+    padding-left: 48px;
+    border-left: 3px solid var(--stone-light);
+    margin-top: 60px;
+  }
+
+  .roadmap-item {
+    position: relative;
+    margin-bottom: 40px;
+    opacity: 0.5;
+    transition: opacity 0.3s;
+  }
+  .roadmap-item.done { opacity: 1; }
+  .roadmap-item.active { opacity: 1; }
+
+  .roadmap-dot {
+    position: absolute;
+    left: -54px; top: 6px;
+    width: 16px; height: 16px;
+    background: var(--stone-light);
+    border: 2px solid var(--stone);
+    image-rendering: pixelated;
+  }
+  .roadmap-item.done .roadmap-dot { background: var(--grass); border-color: var(--grass-dark); }
+  .roadmap-item.active .roadmap-dot {
+    background: var(--gold);
+    border-color: var(--gold-dim);
+    box-shadow: 0 0 12px rgba(246,201,78,0.6);
+    animation: pulse-dot 2s infinite;
+  }
+
+  @keyframes pulse-dot {
+    0%,100% { box-shadow: 0 0 12px rgba(246,201,78,0.6); }
+    50% { box-shadow: 0 0 24px rgba(246,201,78,0.9), 0 0 36px rgba(246,201,78,0.4); }
+  }
+
+  .roadmap-date {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 8px;
+    color: var(--gold);
+    margin-bottom: 8px;
+  }
+
+  .roadmap-title {
+    font-size: 17px;
+    font-weight: 800;
+    color: var(--white);
+  }
+
+  /* ─── LOP CLUB ─── */
+  #lop-club {
+    background: linear-gradient(135deg, var(--stone) 0%, var(--stone-mid) 100%);
+    position: relative;
+    overflow: hidden;
+  }
+
+  #lop-club::after {
+    content: '';
+    position: absolute; top: -100px; right: -100px;
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(126,205,232,0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .club-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+  }
+
+  /* ─── BUILDERS PROGRAM ─── */
+  #builders {
+    background: var(--obsidian);
+    position: relative;
+  }
+
+  .builders-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .modules-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3px;
+    background: var(--obsidian);
+    border: 3px solid var(--stone-light);
+    margin-top: 48px;
+  }
+
+  .module-card {
+    background: var(--stone);
+    padding: 32px 28px;
+    border-left: 4px solid var(--stone-light);
+    transition: border-color 0.25s, background 0.25s;
+  }
+  .module-card:hover { border-left-color: var(--diamond); background: var(--stone-mid); }
+
+  .module-num {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 8px;
+    color: var(--diamond);
+    margin-bottom: 12px;
+  }
+
+  .module-title {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 10px;
+    color: var(--white);
+    margin-bottom: 14px;
+    line-height: 1.7;
+  }
+
+  .module-desc {
+    font-size: 14px;
+    color: var(--cream);
+    line-height: 1.8;
+    font-weight: 600;
+  }
+
+  /* ─── TEAM ─── */
+  #team {
+    background: var(--stone);
+    position: relative;
+  }
+
+  .team-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .team-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 3px;
+    background: var(--obsidian);
+    margin-top: 48px;
+  }
+
+  .team-card {
+    background: var(--stone-mid);
+    padding: 32px 24px;
+    transition: background 0.25s;
+    position: relative;
+    overflow: hidden;
+  }
+  .team-card:hover { background: var(--stone); }
+
+  .team-avatar {
+    width: 64px; height: 64px;
+    background: var(--stone-light);
+    margin-bottom: 18px;
+    position: relative;
+    overflow: hidden;
+    image-rendering: pixelated;
+    /* Minecraft steve head style */
+    display: grid;
+    grid-template-columns: repeat(8,1fr);
+    grid-template-rows: repeat(8,1fr);
+    border: 2px solid var(--stone);
+  }
+
+  .team-name {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 8px;
+    color: var(--white);
+    margin-bottom: 8px;
+    line-height: 1.7;
+  }
+
+  .team-role {
+    font-size: 12px;
+    color: var(--gold);
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 6px;
+  }
+
+  .team-location {
+    font-size: 12px;
+    color: var(--sky);
+    font-weight: 700;
+    margin-bottom: 14px;
+  }
+
+  .team-bio {
+    font-size: 13px;
+    color: var(--cream);
+    line-height: 1.7;
+    font-weight: 600;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* ─── AMBASSADOR CTA ─── */
+  #ambassador {
+    background: var(--stone-mid);
+    position: relative;
+    overflow: hidden;
+    text-align: center;
+    padding: 80px 48px;
+  }
+
+  #ambassador::before {
+    content: '';
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse at 50% 50%, rgba(246,201,78,0.07) 0%, transparent 70%),
+      repeating-linear-gradient(
+        90deg,
+        transparent, transparent 31px,
+        rgba(255,255,255,0.015) 31px, rgba(255,255,255,0.015) 32px
+      );
+  }
+
+  .ambassador-inner {
+    position: relative; z-index: 1;
+    max-width: 700px;
+    margin: 0 auto;
+  }
+
+  /* ─── FOOTER ─── */
+  footer {
+    background: var(--obsidian);
+    border-top: 3px solid var(--stone-light);
+    padding: 64px 48px 40px;
+  }
+
+  .footer-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .footer-top {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 48px;
+    margin-bottom: 48px;
+  }
+
+  .footer-brand .nav-logo {
+    display: block;
+    margin-bottom: 20px;
+    font-size: 10px;
+  }
+
+  .footer-desc {
+    font-size: 14px;
+    color: var(--cream);
+    line-height: 1.8;
+    font-weight: 600;
+    margin-bottom: 24px;
+  }
+
+  .footer-support-btns {
+    display: flex; gap: 12px; flex-wrap: wrap;
+  }
+
+  .btn-support {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 8px;
+    padding: 10px 16px;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.2s;
+  }
+
+  .btn-support.donate {
+    background: var(--gold);
+    color: var(--obsidian);
+    clip-path: polygon(0 0,calc(100% - 4px) 0,100% 4px,100% 100%,4px 100%,0 calc(100% - 4px));
+  }
+  .btn-support.donate:hover { background: var(--gold-dim); }
+
+  .btn-support.signup {
+    background: transparent;
+    color: var(--grass);
+    border: 2px solid var(--grass);
+    clip-path: polygon(0 0,calc(100% - 4px) 0,100% 4px,100% 100%,4px 100%,0 calc(100% - 4px));
+  }
+  .btn-support.signup:hover { background: rgba(90,172,46,0.1); }
+
+  .footer-col h4 {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 8px;
+    color: var(--gold);
+    margin-bottom: 20px;
+    letter-spacing: 0.1em;
+  }
+
+  .footer-col ul { list-style: none; }
+  .footer-col ul li { margin-bottom: 12px; }
+  .footer-col ul li a {
+    font-size: 14px;
+    color: var(--cream);
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.2s;
+  }
+  .footer-col ul li a:hover { color: var(--gold); }
+
+  .footer-bottom {
+    border-top: 2px solid var(--stone-light);
+    padding-top: 28px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+
+  .footer-copy {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 7px;
+    color: rgba(255,255,255,0.3);
+    letter-spacing: 0.1em;
+  }
+
+  .footer-email {
+    font-size: 13px;
+    color: var(--sky);
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  /* ─── PAGE SECTIONS (subpages rendered as scroll sections) ─── */
+
+  /* ─── BLOCK DIVIDER ─── */
+  .block-divider {
+    height: 32px;
+    background: repeating-linear-gradient(
+      90deg,
+      #2a2a40 0px, #2a2a40 32px,
+      #1c1c2e 32px, #1c1c2e 64px
+    );
+    border-top: 2px solid var(--stone-light);
+    border-bottom: 2px solid var(--obsidian);
+  }
+
+  /* ─── SCROLL ANIMATIONS ─── */
+  .reveal { opacity: 0; transform: translateY(32px); }
+  .reveal-left { opacity: 0; transform: translateX(-32px); }
+  .reveal-right { opacity: 0; transform: translateX(32px); }
+
+  /* ─── MOBILE ─── */
+  @media (max-width: 900px) {
+    nav { padding: 0 20px; }
+    .nav-links { display: none; }
+    section { padding: 60px 20px; }
+    .welcome-inner { grid-template-columns: 1fr; gap: 40px; }
+    .zones-grid { grid-template-columns: 1fr; }
+    .testi-grid { grid-template-columns: 1fr; }
+    .club-inner { grid-template-columns: 1fr; gap: 40px; }
+    .modules-grid { grid-template-columns: 1fr; }
+    .team-grid { grid-template-columns: 1fr 1fr; }
+    .footer-top { grid-template-columns: 1fr 1fr; }
+    .stats-bar { grid-template-columns: 1fr 1fr; }
+    .hero-title { font-size: 20px; }
+  }
+
+  @media (max-width: 600px) {
+    .team-grid { grid-template-columns: 1fr; }
+    .footer-top { grid-template-columns: 1fr; }
+    .stats-bar { grid-template-columns: 1fr 1fr; }
+  }
+
+  /* Pixel cross SVG helper */
+  .pixel-cross {
+    display: grid;
+    grid-template-columns: repeat(5,1fr);
+    grid-template-rows: repeat(5,1fr);
+    width: 40px; height: 40px;
+    gap: 1px;
+  }
+  .pixel-cross span {
+    background: var(--gold);
+    opacity: 0;
+  }
+  /* Cross shape: col 3 full + row 3 full */
+  .pixel-cross span:nth-child(3),
+  .pixel-cross span:nth-child(8),
+  .pixel-cross span:nth-child(11),
+  .pixel-cross span:nth-child(12),
+  .pixel-cross span:nth-child(13),
+  .pixel-cross span:nth-child(14),
+  .pixel-cross span:nth-child(15),
+  .pixel-cross span:nth-child(18),
+  .pixel-cross span:nth-child(23) { opacity: 1; }
+</style>
+</head>
+<body>
+
+<!-- ─── NAV ─── -->
+<nav id="main-nav">
+  <a href="#hero" class="nav-logo">LAND<br><span>OF PROMISE</span></a>
+  <ul class="nav-links">
+    <li><a href="#lop-club">LOP Club</a></li>
+    <li><a href="#builders">Builders</a></li>
+    <li><a href="#faith">World</a></li>
+    <li><a href="#team">Team</a></li>
+    <li><a href="#roadmap">Roadmap</a></li>
+    <li><a href="https://discord.gg/Y5NbJXCrRX" class="nav-cta" target="_blank">JOIN DISCORD</a></li>
+  </ul>
+</nav>
+
+<!-- ─── HERO ─── -->
+<section id="hero">
+  <!-- Stars canvas -->
+  <canvas class="stars" id="stars-canvas"></canvas>
+
+  <!-- Floating blocks -->
+  <div class="float-block" style="left:8%;animation-delay:0s;animation-duration:25s;font-size:32px">⬛</div>
+  <div class="float-block" style="left:22%;animation-delay:6s;animation-duration:20s;font-size:24px">🟩</div>
+  <div class="float-block" style="left:75%;animation-delay:3s;animation-duration:28s;font-size:28px">🟫</div>
+  <div class="float-block" style="left:88%;animation-delay:10s;animation-duration:22s;font-size:20px">⬛</div>
+  <div class="float-block" style="left:55%;animation-delay:8s;animation-duration:30s;font-size:36px">🟩</div>
+
+  <div class="hero-content">
+    <div class="hero-tag reveal">✦ A CHRISTIAN MINECRAFT COMMUNITY ✦</div>
+    <h1 class="hero-title reveal">
+      EXPLORE THE<br>
+      <span class="gold">BIBLE</span> THROUGH<br>
+      <span class="green">MINECRAFT</span>
+    </h1>
+    <p class="hero-sub reveal">
+      Where kids explore the Bible through facilitated interactive Minecraft gameplay in small groups. Learn timeless truths, have fun, and connect with new friends from around the world—all in a safe, creative space.
+    </p>
+    <div class="hero-btns reveal">
+      <a href="https://discord.gg/Y5NbJXCrRX" class="btn-primary" target="_blank">JOIN DISCORD</a>
+      <a href="https://bit.ly/LOPsignup" class="btn-secondary" target="_blank">VOLUNTEER</a>
+    </div>
+  </div>
+
+  <div class="scroll-hint">▼ SCROLL TO EXPLORE ▼</div>
+  <div class="hero-ground"></div>
+</section>
+
+<!-- ─── BLOCK DIVIDER ─── -->
+<div class="block-divider"></div>
+
+<!-- ─── WELCOME / STATS ─── -->
+<section id="welcome">
+  <div class="block-bg"></div>
+  <div class="welcome-inner">
+    <div>
+      <span class="section-tag reveal-left">// WELCOME //</span>
+      <h2 class="section-title reveal-left">WELCOME TO<br><span style="color:var(--gold)">LAND OF PROMISE</span></h2>
+      <p class="section-body reveal-left">
+        Play for free on our Java server or join guided Minecraft Education classes for ages 7–12. Perfect for families and churches, we combine faith, fun, and friendship to grow young hearts and disciple them in a vibrant virtual world.
+      </p>
+      <div style="margin-top:32px" class="reveal-left">
+        <a href="https://landofpromiseofficial.xyz/contact-us/" class="btn-primary" target="_blank">JOIN US TODAY</a>
+      </div>
+    </div>
+    <div class="welcome-visual reveal-right">
+      <div class="mc-world">
+        <div class="mc-world-sky"></div>
+        <div class="mc-world-sun"></div>
+        <!-- Pixel art clouds -->
+        <svg style="position:absolute;top:40px;left:40px;opacity:0.6" width="120" height="32" viewBox="0 0 120 32">
+          <rect x="16" y="16" width="88" height="16" fill="#c8e8f0" rx="0"/>
+          <rect x="32" y="0" width="56" height="16" fill="#c8e8f0" rx="0"/>
+        </svg>
+        <svg style="position:absolute;top:70px;right:80px;opacity:0.4" width="80" height="24" viewBox="0 0 80 24">
+          <rect x="8" y="12" width="64" height="12" fill="#c8e8f0" rx="0"/>
+          <rect x="20" y="0" width="40" height="12" fill="#c8e8f0" rx="0"/>
+        </svg>
+        <!-- Pixel cross/church in center -->
+        <div style="position:absolute;bottom:42%;left:50%;transform:translateX(-50%);z-index:5">
+          <svg width="64" height="80" viewBox="0 0 64 80" style="image-rendering:pixelated">
+            <!-- Tower -->
+            <rect x="20" y="20" width="24" height="60" fill="#8b7355"/>
+            <rect x="24" y="24" width="16" height="20" fill="#7a6040"/>
+            <!-- Cross top -->
+            <rect x="28" y="4" width="8" height="24" fill="#c8a96e"/>
+            <rect x="20" y="8" width="24" height="8" fill="#c8a96e"/>
+            <!-- Door -->
+            <rect x="26" y="60" width="12" height="20" fill="#5c4a2e"/>
+          </svg>
+        </div>
+        <!-- Pixel trees -->
+        <svg style="position:absolute;bottom:43%;left:15%;z-index:4" width="32" height="48" viewBox="0 0 32 48" style="image-rendering:pixelated">
+          <rect x="12" y="0" width="8" height="32" fill="#3d7a1e"/>
+          <rect x="8" y="8" width="16" height="8" fill="#5aac2e"/>
+          <rect x="0" y="16" width="32" height="8" fill="#5aac2e"/>
+          <rect x="4" y="24" width="24" height="8" fill="#3d7a1e"/>
+          <rect x="14" y="32" width="4" height="16" fill="#7a6040"/>
+        </svg>
+        <svg style="position:absolute;bottom:43%;right:18%;z-index:4" width="32" height="48" viewBox="0 0 32 48" style="image-rendering:pixelated">
+          <rect x="12" y="0" width="8" height="32" fill="#3d7a1e"/>
+          <rect x="8" y="8" width="16" height="8" fill="#5aac2e"/>
+          <rect x="0" y="16" width="32" height="8" fill="#5aac2e"/>
+          <rect x="4" y="24" width="24" height="8" fill="#3d7a1e"/>
+          <rect x="14" y="32" width="4" height="16" fill="#7a6040"/>
+        </svg>
+        <div class="mc-world-ground"></div>
+        <!-- HUD overlay -->
+        <div style="position:absolute;bottom:8px;left:8px;font-family:'Press Start 2P',monospace;font-size:7px;color:rgba(255,255,255,0.7)">
+          ❤️❤️❤️❤️❤️
+        </div>
+        <div style="position:absolute;top:8px;left:8px;font-family:'Press Start 2P',monospace;font-size:7px;color:rgba(255,255,255,0.7)">
+          Land of Promise v1.0
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-bar reveal" style="max-width:1200px;margin:60px auto 0">
+    <div class="stat-block">
+      <span class="stat-num">7–12</span>
+      <span class="stat-label">Ages Served</span>
+    </div>
+    <div class="stat-block">
+      <span class="stat-num">25+</span>
+      <span class="stat-label">Lessons Built</span>
+    </div>
+    <div class="stat-block">
+      <span class="stat-num">10+</span>
+      <span class="stat-label">Countries</span>
+    </div>
+    <div class="stat-block">
+      <span class="stat-num">FREE</span>
+      <span class="stat-label">Java Server</span>
+    </div>
+  </div>
+</section>
+
+<!-- ─── BLOCK DIVIDER ─── -->
+<div class="block-divider"></div>
+
+<!-- ─── FAITH METAVERSE / ZONES ─── -->
+<section id="faith">
+  <div class="faith-inner">
+    <span class="section-tag reveal">// THE WORLD //</span>
+    <h2 class="section-title reveal">FAITH-BASED<br><span style="color:var(--grass)">METAVERSE</span></h2>
+    <p class="section-body reveal" style="margin:0 auto;text-align:center">
+      Immerse yourself in a world of wonder with interactive Bible stories, engaging quests, inspiring workshops, and virtual gatherings designed to foster fellowship and spiritual growth.
+    </p>
+
+    <div class="zones-grid">
+      <div class="zone-card reveal" style="--zone-color: var(--gold)">
+        <svg width="48" height="48" viewBox="0 0 48 48" style="margin:0 auto 20px;display:block;image-rendering:pixelated">
+          <rect x="8" y="8" width="32" height="32" fill="#c8a96e"/>
+          <rect x="16" y="0" width="16" height="8" fill="#c8a96e"/>
+          <rect x="8" y="16" width="32" height="8" fill="#8b7355"/>
+          <rect x="18" y="28" width="12" height="12" fill="#5c4a2e"/>
+        </svg>
+        <div class="zone-title">ENTRANCE LOBBY</div>
+        <div class="zone-desc">Explore our virtual lobby, where you'll find a prayer wall to pen your heart's desires and a chill zone for relaxed, meaningful connections.</div>
+      </div>
+
+      <div class="zone-card reveal" style="--zone-color: var(--sky)">
+        <svg width="48" height="48" viewBox="0 0 48 48" style="margin:0 auto 20px;display:block;image-rendering:pixelated">
+          <rect x="4" y="28" width="40" height="16" fill="#c8a060"/>
+          <rect x="12" y="12" width="8" height="20" fill="#d4b070"/>
+          <rect x="28" y="12" width="8" height="20" fill="#d4b070"/>
+          <rect x="4" y="8" width="40" height="8" fill="#e8d090"/>
+          <rect x="20" y="20" width="8" height="24" fill="#8b6030"/>
+        </svg>
+        <div class="zone-title">BIBLICAL JERUSALEM</div>
+        <div class="zone-desc">Travel to ancient Jerusalem in the year 60 AD. Roam the streets, soak in the atmosphere, and gain a profound understanding of the city's history.</div>
+      </div>
+
+      <div class="zone-card reveal" style="--zone-color: var(--diamond)">
+        <svg width="48" height="48" viewBox="0 0 48 48" style="margin:0 auto 20px;display:block;image-rendering:pixelated">
+          <rect x="16" y="0" width="16" height="8" fill="#c8a96e"/>
+          <rect x="8" y="8" width="32" height="4" fill="#c8a96e"/>
+          <rect x="4" y="12" width="40" height="36" fill="#d4b070"/>
+          <rect x="20" y="12" width="8" height="36" fill="#c09050"/>
+          <rect x="4" y="12" width="8" height="36" fill="#c09050"/>
+          <rect x="36" y="12" width="8" height="36" fill="#c09050"/>
+        </svg>
+        <div class="zone-title">TABERNACLE</div>
+        <div class="zone-desc">The Tabernacle described in the Old Testament was a portable sanctuary used by the Israelites during their wilderness wanderings — rebuild and explore it.</div>
+      </div>
+
+      <div class="zone-card reveal" style="--zone-color: var(--grass)">
+        <svg width="48" height="48" viewBox="0 0 48 48" style="margin:0 auto 20px;display:block;image-rendering:pixelated">
+          <rect x="0" y="32" width="48" height="16" fill="#5aac2e"/>
+          <rect x="0" y="28" width="48" height="4" fill="#3d7a1e"/>
+          <rect x="4" y="12" width="8" height="20" fill="#7a6040"/>
+          <rect x="36" y="16" width="8" height="16" fill="#7a6040"/>
+          <rect x="0" y="4" width="20" height="12" fill="#5aac2e"/>
+          <rect x="28" y="8" width="16" height="10" fill="#5aac2e"/>
+        </svg>
+        <div class="zone-title">SURVIVAL WORLD</div>
+        <div class="zone-desc">Players unite in faithful survival modes to craft, build, and band together to achieve their survival goals — all guided by faith.</div>
+      </div>
+
+      <div class="zone-card reveal" style="--zone-color: var(--sky)">
+        <svg width="48" height="48" viewBox="0 0 48 48" style="margin:0 auto 20px;display:block;image-rendering:pixelated">
+          <rect x="0" y="32" width="48" height="16" fill="#808080"/>
+          <rect x="4" y="8" width="16" height="28" fill="#a0a0a0"/>
+          <rect x="28" y="16" width="16" height="20" fill="#a0a0a0"/>
+          <rect x="8" y="4" width="8" height="8" fill="#7ecde8"/>
+          <rect x="32" y="10" width="8" height="8" fill="#7ecde8"/>
+        </svg>
+        <div class="zone-title">MEHTROPOLIS</div>
+        <div class="zone-desc">Our thriving urban metropolis, set to expand across our vast land, promising endless opportunities for exploration and community engagement.</div>
+      </div>
+
+      <div class="zone-card reveal" style="--zone-color: var(--gold)">
+        <svg width="48" height="48" viewBox="0 0 48 48" style="margin:0 auto 20px;display:block;image-rendering:pixelated">
+          <rect x="4" y="20" width="10" height="10" fill="#f6c94e"/>
+          <rect x="19" y="20" width="10" height="10" fill="#5de4e4"/>
+          <rect x="34" y="20" width="10" height="10" fill="#f06060"/>
+          <rect x="0" y="32" width="48" height="4" fill="#c0c0c0"/>
+          <rect x="8" y="8" width="8" height="12" fill="#f6c94e" opacity="0.6"/>
+          <rect x="22" y="12" width="8" height="8" fill="#5de4e4" opacity="0.6"/>
+          <rect x="36" y="10" width="8" height="10" fill="#f06060" opacity="0.6"/>
+        </svg>
+        <div class="zone-title">MINI GAMES</div>
+        <div class="zone-desc">Have fun with our mini-games! Enjoy playing hide 'n' seek, hunger games, block party, and paintball with friends from around the world.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── BLOCK DIVIDER ─── -->
+<div class="block-divider"></div>
+
+<!-- ─── LOP CLUB ─── -->
+<section id="lop-club">
+  <div class="club-inner">
+    <div>
+      <span class="section-tag reveal-left">// LOP CLUB //</span>
+      <h2 class="section-title reveal-left">BUILD FAITH,<br><span style="color:var(--sky)">FUN & FRIENDSHIP</span><br>THROUGH GAMING</h2>
+      <p class="section-body reveal-left">
+        Welcome to Land of Promise, where we combine biblical education with engaging Minecraft gameplay in a safe, supervised environment. Our program transforms screen time into meaningful learning time.
+      </p>
+      <p class="section-body reveal-left" style="margin-top:20px">
+        Join our growing community of young learners. Classes for ages 7–12, facilitated in small groups with trained leaders.
+      </p>
+      <div style="margin-top:36px" class="reveal-left">
+        <a href="https://bit.ly/LoPMinecraftClub" class="btn-primary" target="_blank">SIGN UP NOW</a>
+      </div>
+    </div>
+    <div class="reveal-right">
+      <!-- Feature list as inventory slots -->
+      <div style="background:var(--stone);border:3px solid var(--stone-light);padding:28px">
+        <div style="font-family:'Press Start 2P',monospace;font-size:9px;color:var(--gold);margin-bottom:20px;letter-spacing:0.1em">WHAT YOU GET</div>
+        <div style="display:flex;flex-direction:column;gap:3px">
+          <div style="background:var(--stone-mid);padding:16px 20px;display:flex;align-items:center;gap:16px;border-left:3px solid var(--grass)">
+            <svg width="24" height="24" viewBox="0 0 24 24" style="flex-shrink:0;image-rendering:pixelated"><rect x="8" y="0" width="8" height="8" fill="#5aac2e"/><rect x="0" y="8" width="8" height="8" fill="#5aac2e"/><rect x="8" y="8" width="8" height="8" fill="#5aac2e"/><rect x="16" y="8" width="8" height="8" fill="#5aac2e"/><rect x="8" y="16" width="8" height="8" fill="#5aac2e"/></svg>
+            <span style="font-size:14px;font-weight:700;color:var(--white)">Weekly Bible-integrated sessions</span>
+          </div>
+          <div style="background:var(--stone-mid);padding:16px 20px;display:flex;align-items:center;gap:16px;border-left:3px solid var(--sky)">
+            <svg width="24" height="24" viewBox="0 0 24 24" style="flex-shrink:0;image-rendering:pixelated"><rect x="0" y="8" width="24" height="8" fill="#7ecde8"/><rect x="8" y="0" width="8" height="8" fill="#7ecde8"/><rect x="8" y="16" width="8" height="8" fill="#7ecde8"/></svg>
+            <span style="font-size:14px;font-weight:700;color:var(--white)">Small group facilitation (safe space)</span>
+          </div>
+          <div style="background:var(--stone-mid);padding:16px 20px;display:flex;align-items:center;gap:16px;border-left:3px solid var(--gold)">
+            <svg width="24" height="24" viewBox="0 0 24 24" style="flex-shrink:0;image-rendering:pixelated"><rect x="4" y="4" width="16" height="16" fill="#f6c94e"/><rect x="8" y="0" width="8" height="4" fill="#f6c94e"/><rect x="0" y="8" width="4" height="8" fill="#f6c94e"/><rect x="20" y="8" width="4" height="8" fill="#f6c94e"/><rect x="8" y="20" width="8" height="4" fill="#f6c94e"/></svg>
+            <span style="font-size:14px;font-weight:700;color:var(--white)">Trained Christian facilitators</span>
+          </div>
+          <div style="background:var(--stone-mid);padding:16px 20px;display:flex;align-items:center;gap:16px;border-left:3px solid var(--diamond)">
+            <svg width="24" height="24" viewBox="0 0 24 24" style="flex-shrink:0;image-rendering:pixelated"><rect x="8" y="0" width="8" height="8" fill="#5de4e4"/><rect x="0" y="8" width="24" height="8" fill="#5de4e4"/><rect x="8" y="16" width="8" height="8" fill="#5de4e4"/></svg>
+            <span style="font-size:14px;font-weight:700;color:var(--white)">Global community of young believers</span>
+          </div>
+          <div style="background:var(--stone-mid);padding:16px 20px;display:flex;align-items:center;gap:16px;border-left:3px solid var(--grass)">
+            <svg width="24" height="24" viewBox="0 0 24 24" style="flex-shrink:0;image-rendering:pixelated"><rect x="4" y="8" width="16" height="8" fill="#5aac2e"/><rect x="8" y="4" width="8" height="16" fill="#5aac2e"/></svg>
+            <span style="font-size:14px;font-weight:700;color:var(--white)">Free Java server access included</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── BLOCK DIVIDER ─── -->
+<div class="block-divider"></div>
+
+<!-- ─── BUILDERS PROGRAM ─── -->
+<section id="builders">
+  <div class="builders-inner">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:start">
+      <div>
+        <span class="section-tag reveal-left">// BUILDERS PROGRAM //</span>
+        <h2 class="section-title reveal-left">START YOUR OWN<br><span style="color:var(--diamond)">MINECRAFT MINISTRY</span></h2>
+        <p class="section-body reveal-left">
+          12 Modules tailored to turn your team into Digital Gaming Facilitators. Land of Promise provides the digital skin to house your youth work. Over 12 months, we translate the timeless art of pastoral care into the immersive world of Minecraft.
+        </p>
+        <div style="margin-top:28px;background:var(--stone);border:2px solid var(--stone-light);padding:24px" class="reveal-left">
+          <div style="font-family:'Press Start 2P',monospace;font-size:8px;color:var(--gold);margin-bottom:16px">YOU NEED:</div>
+          <ul style="list-style:none;display:flex;flex-direction:column;gap:10px">
+            <li style="font-size:14px;font-weight:700;color:var(--cream);padding-left:20px;position:relative"><span style="position:absolute;left:0;color:var(--grass)">▶</span> A passionate lead facilitator</li>
+            <li style="font-size:14px;font-weight:700;color:var(--cream);padding-left:20px;position:relative"><span style="position:absolute;left:0;color:var(--grass)">▶</span> 2 helpers to run sessions</li>
+            <li style="font-size:14px;font-weight:700;color:var(--cream);padding-left:20px;position:relative"><span style="position:absolute;left:0;color:var(--grass)">▶</span> A church or organisation sponsor</li>
+            <li style="font-size:14px;font-weight:700;color:var(--cream);padding-left:20px;position:relative"><span style="position:absolute;left:0;color:var(--grass)">▶</span> A group of children/young people</li>
+          </ul>
+        </div>
+        <div style="margin-top:28px" class="reveal-left">
+          <a href="https://landofpromiseofficial.xyz/builders-program/" class="btn-primary" target="_blank">LEARN MORE</a>
+        </div>
+      </div>
+      <div>
+        <div style="font-family:'Press Start 2P',monospace;font-size:9px;color:var(--white);margin-bottom:20px;letter-spacing:0.05em" class="reveal-right">12 MODULES</div>
+        <div class="modules-grid reveal-right">
+          <div class="module-card">
+            <div class="module-num">MODULE 1</div>
+            <div class="module-title">THE FOUNDATION</div>
+            <div class="module-desc">4-hour intensive. Mission, theology, safe spaces, and your ministry launch plan.</div>
+          </div>
+          <div class="module-card">
+            <div class="module-num">MODULE 2</div>
+            <div class="module-title">SKILL BUILDING</div>
+            <div class="module-desc">Java Server training with monthly live classes on games and fellowship formation.</div>
+          </div>
+          <div class="module-card">
+            <div class="module-num">MOD 3–5</div>
+            <div class="module-title">FOUNDATIONS & SAFETY</div>
+            <div class="module-desc">In-depth training on keeping children safe and securing your Discord servers.</div>
+          </div>
+          <div class="module-card">
+            <div class="module-num">MOD 6–9</div>
+            <div class="module-title">BUILDING CONTENT</div>
+            <div class="module-desc">Minecraft & The Bible: creating lessons that work hand-in-hand with gameplay.</div>
+          </div>
+          <div class="module-card" style="grid-column:1/-1">
+            <div class="module-num">MOD 10–12</div>
+            <div class="module-title">FAMILY EVENTS & CERTIFICATION</div>
+            <div class="module-desc">Planning in-person Minecraft events, parental support guidance, and Official LOP Certification upon completion.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── BLOCK DIVIDER ─── -->
+<div class="block-divider"></div>
+
+<!-- ─── TESTIMONIALS ─── -->
+<section id="testimonials">
+  <div class="testimonials-inner">
+    <div class="testi-header">
+      <div>
+        <span class="section-tag reveal-left">// PARENTS SAY //</span>
+        <h2 class="section-title reveal-left">HEAR FROM<br><span style="color:var(--gold)">KIDS' PARENTS</span></h2>
+      </div>
+    </div>
+    <div class="testi-grid">
+      <div class="testi-card reveal">
+        <div class="testi-quote">Land of Promise has helped my child grow in faith, building projects like a parkour course or building the ark of the covenant with friends gave them a sense of teamwork and camaraderie.</div>
+        <div class="testi-author">Howard</div>
+        <div class="testi-location">📍 Malaysia</div>
+      </div>
+      <div class="testi-card reveal">
+        <div class="testi-quote">My son learned how to pray not just for their sick friends but also pray for their country, pray for the weather — it is just nice that they get to pray for each other from different parts of the world.</div>
+        <div class="testi-author">Pastor Michael</div>
+        <div class="testi-location">📍 Philippines</div>
+      </div>
+      <div class="testi-card reveal">
+        <div class="testi-quote">Saturday night Bible studies are a weekly highlight for my 8 year old. Because of the way the sessions are structured it helps the scriptures and the concepts to stick. My son talks about what he learned afterwards.</div>
+        <div class="testi-author">Priscilla</div>
+        <div class="testi-location">📍 Thailand</div>
+      </div>
+      <div class="testi-card reveal">
+        <div class="testi-quote">LOP changed our mindset about gaming and caused her to be more confident through the friendship forged and also the discussions as they plow through the missions together.</div>
+        <div class="testi-author">Jason</div>
+        <div class="testi-location">📍 Singapore</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── BLOCK DIVIDER ─── -->
+<div class="block-divider"></div>
+
+<!-- ─── ROADMAP ─── -->
+<section id="roadmap">
+  <div class="roadmap-inner">
+    <span class="section-tag reveal">// THE JOURNEY //</span>
+    <h2 class="section-title reveal">OUR <span style="color:var(--gold)">ROADMAP</span></h2>
+    <p class="section-body reveal">From a single vision in Singapore to a global Christian gaming community — here's how Land of Promise was built, block by block.</p>
+
+    <div class="roadmap-line">
+      <div class="roadmap-item done reveal">
+        <div class="roadmap-dot"></div>
+        <div class="roadmap-date">March 2022</div>
+        <div class="roadmap-title">Project Commencement</div>
+      </div>
+      <div class="roadmap-item done reveal">
+        <div class="roadmap-dot"></div>
+        <div class="roadmap-date">August 2022</div>
+        <div class="roadmap-title">Working Prototype (JAVA) Completed</div>
+      </div>
+      <div class="roadmap-item done reveal">
+        <div class="roadmap-dot"></div>
+        <div class="roadmap-date">October 2022</div>
+        <div class="roadmap-title">Early Closed Access (Ongoing)</div>
+      </div>
+      <div class="roadmap-item done reveal">
+        <div class="roadmap-dot"></div>
+        <div class="roadmap-date">February 2023</div>
+        <div class="roadmap-title">Play & Learn Bible Curriculum Development</div>
+      </div>
+      <div class="roadmap-item done reveal">
+        <div class="roadmap-dot"></div>
+        <div class="roadmap-date">June 2023</div>
+        <div class="roadmap-title">Pilot Testing with Churches</div>
+      </div>
+      <div class="roadmap-item done reveal">
+        <div class="roadmap-dot"></div>
+        <div class="roadmap-date">Q4 2023</div>
+        <div class="roadmap-title">Soft Launch — Selected Trials</div>
+      </div>
+      <div class="roadmap-item done reveal">
+        <div class="roadmap-dot"></div>
+        <div class="roadmap-date">August 2024</div>
+        <div class="roadmap-title">Series 1: Ten Lessons of Biblical Minecraft Survival Play</div>
+      </div>
+      <div class="roadmap-item done reveal">
+        <div class="roadmap-dot"></div>
+        <div class="roadmap-date">October 2024</div>
+        <div class="roadmap-title">Series 2: 15 Lessons of Biblical Studies in Jerusalem</div>
+      </div>
+      <div class="roadmap-item done reveal">
+        <div class="roadmap-dot"></div>
+        <div class="roadmap-date">Nov / Dec 2024</div>
+        <div class="roadmap-title">🚀 Launch of LOP Minecraft Education Facilitated Sessions!</div>
+      </div>
+      <div class="roadmap-item active reveal">
+        <div class="roadmap-dot"></div>
+        <div class="roadmap-date">2025 ← NOW</div>
+        <div class="roadmap-title">LOP Minecraft Education Curriculum & Church Training Modules</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── BLOCK DIVIDER ─── -->
+<div class="block-divider"></div>
+
+<!-- ─── TEAM ─── -->
+<section id="team">
+  <div class="team-inner">
+    <span class="section-tag reveal">// THE TEAM //</span>
+    <h2 class="section-title reveal">MEET THE <span style="color:var(--sky)">MINECRAFT MINISTRY</span> TEAM</h2>
+    <p class="section-body reveal">Passionate. Skilled. Committed. Our global team of believers building digital discipleship.</p>
+
+    <div class="team-grid">
+      <div class="team-card reveal">
+        <div style="width:56px;height:56px;background:linear-gradient(135deg,#c8a96e,#8b7355);margin-bottom:16px;border:2px solid var(--stone-light);display:flex;align-items:center;justify-content:center;font-family:'Press Start 2P',monospace;font-size:14px;color:var(--obsidian)">PB</div>
+        <div class="team-name">Patrick Bezalel</div>
+        <div class="team-role">Founder & Creative Director</div>
+        <div class="team-location">📍 Singapore</div>
+        <div class="team-bio">Full-time faith-based artist and Creative Director with 20 years in the creative industry. 17 years serving in youth ministry. Building biblical experiences in Minecraft.</div>
+      </div>
+      <div class="team-card reveal">
+        <div style="width:56px;height:56px;background:linear-gradient(135deg,#7ecde8,#4a8fa8);margin-bottom:16px;border:2px solid var(--stone-light);display:flex;align-items:center;justify-content:center;font-family:'Press Start 2P',monospace;font-size:14px;color:var(--obsidian)">LC</div>
+        <div class="team-name">Lily Chia</div>
+        <div class="team-role">Founder & Lead</div>
+        <div class="team-location">📍 Singapore</div>
+        <div class="team-bio">Director of Patrick Bezalel Gallery and Founder of Mehtaverse. Founded two multi-million revenue agencies. Passionate about immersive faith experiences for the next generation.</div>
+      </div>
+      <div class="team-card reveal">
+        <div style="width:56px;height:56px;background:linear-gradient(135deg,#5aac2e,#3d7a1e);margin-bottom:16px;border:2px solid var(--stone-light);display:flex;align-items:center;justify-content:center;font-family:'Press Start 2P',monospace;font-size:14px;color:var(--obsidian)">DL</div>
+        <div class="team-name">David Loh</div>
+        <div class="team-role">Gallery Manager</div>
+        <div class="team-location">📍 Singapore</div>
+        <div class="team-bio">Gallery manager passionate about preaching the Gospel through any means necessary — on the streets and digitally around the world.</div>
+      </div>
+      <div class="team-card reveal">
+        <div style="width:56px;height:56px;background:linear-gradient(135deg,#f6c94e,#c49a20);margin-bottom:16px;border:2px solid var(--stone-light);display:flex;align-items:center;justify-content:center;font-family:'Press Start 2P',monospace;font-size:14px;color:var(--obsidian)">YL</div>
+        <div class="team-name">Yvea Rizzy Latoza</div>
+        <div class="team-role">Project Manager</div>
+        <div class="team-location">📍 Philippines</div>
+        <div class="team-bio">7 years experience as a healthcare missionary. Passionate about compassionate care for children and fulfilling the Great Commission.</div>
+      </div>
+      <div class="team-card reveal">
+        <div style="width:56px;height:56px;background:linear-gradient(135deg,#9060f0,#6040a0);margin-bottom:16px;border:2px solid var(--stone-light);display:flex;align-items:center;justify-content:center;font-family:'Press Start 2P',monospace;font-size:14px;color:var(--white)">EL</div>
+        <div class="team-name">Endz Lim</div>
+        <div class="team-role">Trainer: Partnerships</div>
+        <div class="team-location">📍 Philippines</div>
+        <div class="team-bio">Christian Gamer dad using Twitch as a platform for ministry — using gaming to inspire and share God's Word with fellow gamers.</div>
+      </div>
+      <div class="team-card reveal">
+        <div style="width:56px;height:56px;background:linear-gradient(135deg,#5de4e4,#3ab0b0);margin-bottom:16px;border:2px solid var(--stone-light);display:flex;align-items:center;justify-content:center;font-family:'Press Start 2P',monospace;font-size:14px;color:var(--obsidian)">MS</div>
+        <div class="team-name">Moses Shao</div>
+        <div class="team-role">Curriculum Architect</div>
+        <div class="team-location">📍 Taiwan</div>
+        <div class="team-bio">Moved to Taiwan at 15 to serve in church. 11 years full-time in youth ministry, discipling the next generation to discover their identity in Christ.</div>
+      </div>
+      <div class="team-card reveal">
+        <div style="width:56px;height:56px;background:linear-gradient(135deg,#e06040,#a04020);margin-bottom:16px;border:2px solid var(--stone-light);display:flex;align-items:center;justify-content:center;font-family:'Press Start 2P',monospace;font-size:14px;color:var(--white)">MV</div>
+        <div class="team-name">Mark Vanderwagen</div>
+        <div class="team-role">Developer & Facilitator</div>
+        <div class="team-location">📍 South Africa</div>
+        <div class="team-bio">Developer and Minecraft Missionary. Believes that even in digital spaces, God can plant seeds, build community, and change lives.</div>
+      </div>
+      <div class="team-card reveal">
+        <div style="width:56px;height:56px;background:linear-gradient(135deg,#6090e0,#3060a0);margin-bottom:16px;border:2px solid var(--stone-light);display:flex;align-items:center;justify-content:center;font-family:'Press Start 2P',monospace;font-size:14px;color:var(--white)">IT</div>
+        <div class="team-name">Ike Lorenz Tazan</div>
+        <div class="team-role">Programmer & Developer</div>
+        <div class="team-location">📍 USA</div>
+        <div class="team-bio">Dedicated Minecraft Server Developer creating custom game modes, virtual places of worship, and quests that explore spiritual themes.</div>
+      </div>
+      <div class="team-card reveal">
+        <div style="width:56px;height:56px;background:linear-gradient(135deg,#c0d060,#809020);margin-bottom:16px;border:2px solid var(--stone-light);display:flex;align-items:center;justify-content:center;font-family:'Press Start 2P',monospace;font-size:14px;color:var(--obsidian)">JH</div>
+        <div class="team-name">Josiah Hollaway</div>
+        <div class="team-role">Pastoral Relations</div>
+        <div class="team-location">📍 United Kingdom</div>
+        <div class="team-bio">Lifelong gamer, YMCA chaplain, and youth club manager. Passionate about supporting lonely and isolated young men through faith and gaming.</div>
+      </div>
+    </div>
+
+    <div style="margin-top:48px;text-align:center" class="reveal">
+      <a href="https://bit.ly/LOPsignup" class="btn-primary" target="_blank">APPLY TO BE AN AMBASSADOR</a>
+    </div>
+  </div>
+</section>
+
+<!-- ─── BLOCK DIVIDER ─── -->
+<div class="block-divider"></div>
+
+<!-- ─── AMBASSADOR CTA ─── -->
+<section id="ambassador">
+  <div class="ambassador-inner">
+    <span class="section-tag reveal">// JOIN THE MISSION //</span>
+    <h2 class="section-title reveal" style="font-size:clamp(18px,3vw,34px)">BECOME AN<br><span style="color:var(--gold)">AMBASSADOR</span><br>TODAY</h2>
+    <p class="section-body reveal" style="margin:0 auto 36px;text-align:center">
+      We are looking for ambassadors to join the team and spread the word on the Land of Promise! Help us build the kingdom—one block at a time.
+    </p>
+    <div class="reveal" style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap">
+      <a href="https://landofpromiseofficial.xyz/contact-us/" class="btn-primary" target="_blank">JOIN US</a>
+      <a href="http://paypal.me/landofpromise" class="btn-secondary" target="_blank">DONATE</a>
+    </div>
+  </div>
+</section>
+
+<!-- ─── FOOTER ─── -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <a href="#hero" class="nav-logo">LAND OF<br><span>PROMISE</span></a>
+        <p class="footer-desc">A Christian Minecraft Community creating safe spaces for children to study the Word, play, fellowship, and grow as disciples in Christ together.</p>
+        <p class="footer-desc" style="font-size:12px;color:rgba(255,255,255,0.4)">A Project by Patrick Bezalel Pte Ltd, Singapore</p>
+        <div class="footer-support-btns">
+          <a href="https://bit.ly/LOPsignup" class="btn-support signup" target="_blank">SIGN UP</a>
+          <a href="http://paypal.me/landofpromise" class="btn-support donate" target="_blank">DONATE</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>EXPLORE</h4>
+        <ul>
+          <li><a href="#faith">Our World</a></li>
+          <li><a href="#lop-club">LOP Club</a></li>
+          <li><a href="#builders">Builders Program</a></li>
+          <li><a href="#roadmap">Roadmap</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>COMMUNITY</h4>
+        <ul>
+          <li><a href="https://discord.gg/Y5NbJXCrRX" target="_blank">Join Discord</a></li>
+          <li><a href="https://bit.ly/LOPsignup" target="_blank">Volunteer</a></li>
+          <li><a href="#team">Meet the Team</a></li>
+          <li><a href="https://landofpromiseofficial.xyz/contact-us/" target="_blank">Contact Us</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>LEGAL</h4>
+        <ul>
+          <li><a href="https://landofpromiseofficial.xyz/lop-manners-manifesto/" target="_blank">Manners Manifesto</a></li>
+          <li><a href="https://landofpromiseofficial.xyz/terms-of-service-server/" target="_blank">Terms of Service</a></li>
+        </ul>
+        <div style="margin-top:24px">
+          <h4>CONNECT</h4>
+          <a href="https://linktr.ee/landofpromiseofficial" target="_blank" style="font-size:13px;color:var(--sky);font-weight:700;text-decoration:none">linktr.ee/landofpromise</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span class="footer-copy">LAND OF PROMISE 2025™ — ALL RIGHTS RESERVED</span>
+      <a href="mailto:info@patrickbezalel.com" class="footer-email">info@patrickbezalel.com</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+// ─── STARS ───
+(function() {
+  const canvas = document.getElementById('stars-canvas');
+  const ctx = canvas.getContext('2d');
+  function resize() {
+    canvas.width = canvas.offsetWidth;
+    canvas.height = canvas.offsetHeight;
+    drawStars();
+  }
+  function drawStars() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const count = 200;
+    for (let i = 0; i < count; i++) {
+      const x = Math.random() * canvas.width;
+      const y = Math.random() * canvas.height * 0.65;
+      const size = Math.random() < 0.1 ? 2 : 1;
+      const bright = Math.random() * 0.6 + 0.2;
+      ctx.fillStyle = `rgba(255,255,240,${bright})`;
+      ctx.fillRect(Math.floor(x), Math.floor(y), size, size);
+    }
+  }
+  resize();
+  window.addEventListener('resize', resize);
+})();
+
+// ─── GSAP SCROLL ANIMATIONS ───
+gsap.registerPlugin(ScrollTrigger);
+
+// Hero entrance
+gsap.timeline({ delay: 0.3 })
+  .from('.hero-tag', { opacity: 0, y: 20, duration: 0.6 })
+  .from('.hero-title', { opacity: 0, y: 30, duration: 0.7 }, '-=0.3')
+  .from('.hero-sub', { opacity: 0, y: 20, duration: 0.6 }, '-=0.4')
+  .from('.hero-btns', { opacity: 0, y: 20, duration: 0.5 }, '-=0.3')
+  .from('.scroll-hint', { opacity: 0, duration: 0.5 }, '-=0.2');
+
+// Generic reveals
+gsap.utils.toArray('.reveal').forEach(el => {
+  gsap.fromTo(el,
+    { opacity: 0, y: 40 },
+    {
+      opacity: 1, y: 0, duration: 0.7, ease: 'power2.out',
+      scrollTrigger: { trigger: el, start: 'top 88%', toggleActions: 'play none none none' }
+    }
+  );
+});
+
+gsap.utils.toArray('.reveal-left').forEach(el => {
+  gsap.fromTo(el,
+    { opacity: 0, x: -40 },
+    {
+      opacity: 1, x: 0, duration: 0.7, ease: 'power2.out',
+      scrollTrigger: { trigger: el, start: 'top 88%', toggleActions: 'play none none none' }
+    }
+  );
+});
+
+gsap.utils.toArray('.reveal-right').forEach(el => {
+  gsap.fromTo(el,
+    { opacity: 0, x: 40 },
+    {
+      opacity: 1, x: 0, duration: 0.7, ease: 'power2.out',
+      scrollTrigger: { trigger: el, start: 'top 88%', toggleActions: 'play none none none' }
+    }
+  );
+});
+
+// Stagger zone cards
+gsap.utils.toArray('.zone-card').forEach((card, i) => {
+  gsap.fromTo(card,
+    { opacity: 0, y: 30, scale: 0.97 },
+    {
+      opacity: 1, y: 0, scale: 1, duration: 0.5, ease: 'power2.out', delay: i * 0.08,
+      scrollTrigger: { trigger: '#faith .zones-grid', start: 'top 85%', toggleActions: 'play none none none' }
+    }
+  );
+});
+
+// Stagger team cards
+gsap.utils.toArray('.team-card').forEach((card, i) => {
+  gsap.fromTo(card,
+    { opacity: 0, y: 30 },
+    {
+      opacity: 1, y: 0, duration: 0.5, ease: 'power2.out', delay: i * 0.07,
+      scrollTrigger: { trigger: '#team .team-grid', start: 'top 85%', toggleActions: 'play none none none' }
+    }
+  );
+});
+
+// Stat counter animation
+function animateCounters() {
+  document.querySelectorAll('.stat-num').forEach(el => {
+    const text = el.textContent;
+    if (text === 'FREE') return;
+    const match = text.match(/(\d+)/);
+    if (!match) return;
+    const target = parseInt(match[1]);
+    const suffix = text.replace(match[1], '');
+    let start = 0;
+    const dur = 1500;
+    const step = (timestamp) => {
+      if (!start) start = timestamp;
+      const prog = Math.min((timestamp - start) / dur, 1);
+      const ease = 1 - Math.pow(1 - prog, 3);
+      el.textContent = Math.floor(ease * target) + suffix;
+      if (prog < 1) requestAnimationFrame(step);
+    };
+    ScrollTrigger.create({
+      trigger: el,
+      start: 'top 90%',
+      onEnter: () => requestAnimationFrame(step),
+      once: true
+    });
+  });
+}
+animateCounters();
+
+// Nav scroll effect
+const nav = document.getElementById('main-nav');
+window.addEventListener('scroll', () => {
+  if (window.scrollY > 60) {
+    nav.style.borderBottomColor = 'rgba(246,201,78,0.25)';
+  } else {
+    nav.style.borderBottomColor = 'rgba(246,201,78,0.15)';
+  }
+});
+
+// Roadmap line draw
+gsap.fromTo('#roadmap .roadmap-line',
+  { '--line-progress': '0%' },
+  {
+    scrollTrigger: {
+      trigger: '#roadmap .roadmap-line',
+      start: 'top 80%',
+      end: 'bottom 20%',
+      scrub: 1
+    }
+  }
+);
+</script>
+</body>
+</html>
